@@ -5,10 +5,32 @@ import { useEffect, useState } from "react";
 
 export default function Home({ trendingMovies }) {
   const [searchResults, setSearchResults] = useState([]);
-
+  const [formInput, setFormInput] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     setSearchResults(trendingMovies);
   }, [trendingMovies]);
+
+  const handleInput = (event) => {
+    let { name, value } = event.target;
+    setFormInput({ ...formInput, [name]: value });
+    console.log(event.target.value);
+    setSearchTerm(event.target.value);
+  };
+
+  const search = async (event) => {
+    event.preventDefault();
+    console.log("CLICK");
+    console.log(searchTerm);
+    let movies = await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=${process.env.API_KEY}&language=en-US&query=${searchTerm}&page=1&include_adult=false`
+    );
+
+    movies = await movies.json();
+    movies = await movies.results;
+    console.log(movies);
+    setSearchResults(movies);
+  };
   console.log(trendingMovies);
   return (
     <div className={styles.container}>
@@ -18,6 +40,35 @@ export default function Home({ trendingMovies }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1>Movies App</h1>
+      <div>
+        <form onSubmit={search}>
+          <input
+            className="search"
+            name="searchTerm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            type="text"
+            placeholder="Search for a movie"
+            required
+          />
+
+          <button
+            className="btn-search"
+            disabled={search === ""}
+            onClick={async () => {
+              let movies = await fetch(
+                `https://api.themoviedb.org/3/search/movie?api_key=${process.env.API_KEY}&language=en-US&query=${searchTerm}&page-1&include_adult=false`
+              );
+              movies = await movies.json();
+              movies = await movies.results;
+              console.log(movies);
+              setSearchResults(movies);
+            }}
+          >
+            Search
+          </button>
+        </form>
+      </div>
       <div className="movie-search-results-grid">
         {searchResults.map((each, index) => {
           return (

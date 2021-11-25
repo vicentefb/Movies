@@ -6,4 +6,7 @@ module.exports = {
     path: "/_next/image",
     loader: "default",
   },
+  env: {
+    API_KEY: process.env.API_KEY,
+  },
 };
