@@ -11,27 +11,16 @@ export default function Home({ trendingMovies }) {
     setSearchResults(trendingMovies);
   }, [trendingMovies]);
 
-  const handleInput = (event) => {
-    let { name, value } = event.target;
-    setFormInput({ ...formInput, [name]: value });
-    console.log(event.target.value);
-    setSearchTerm(event.target.value);
-  };
-
   const search = async (event) => {
     event.preventDefault();
-    console.log("CLICK");
-    console.log(searchTerm);
     let movies = await fetch(
       `https://api.themoviedb.org/3/search/movie?api_key=${process.env.API_KEY}&language=en-US&query=${searchTerm}&page=1&include_adult=false`
     );
 
     movies = await movies.json();
     movies = await movies.results;
-    console.log(movies);
     setSearchResults(movies);
   };
-  console.log(trendingMovies);
   return (
     <div className={styles.container}>
       <Head>
@@ -61,7 +50,6 @@ export default function Home({ trendingMovies }) {
               );
               movies = await movies.json();
               movies = await movies.results;
-              console.log(movies);
               setSearchResults(movies);
             }}
           >
@@ -92,7 +80,6 @@ export async function getServerSideProps() {
   );
   let trendingMovies = await data.json();
   trendingMovies = await trendingMovies.results;
-  //console.log(trendingMovies[0]);
 
   return {
     props: { trendingMovies },
